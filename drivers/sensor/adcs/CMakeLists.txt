@@ -1,0 +1,4 @@
+zephyr_library_named(drivers_sensor_adcsensor)
+zephyr_library_sources(adcsensor.c)
+zephyr_library_link_libraries(zephyr_interface)
+add_dependencies(drivers_sensor_adcsensor offsets_h)

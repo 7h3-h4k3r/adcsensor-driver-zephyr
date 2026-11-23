@@ -1,0 +1,20 @@
+description: Custom Mq-135 Air Quality Gas Sensor Driver
+
+compatible: "custom,sensoradc"
+
+include: sensor-device.yaml
+
+properties:
+  io-channels:
+    required: true
+    description: ADC channel connected to MQ125 A0 pin
+  min-adc:
+    type: int
+    default: 450
+    description: Baseline raw ADC value in clean air
+  max-adc:
+    type: int
+    default: 3500
+    description: Maximim raw ADC valur at 100% pollution thershold
+
+    

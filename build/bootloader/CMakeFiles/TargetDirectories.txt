@@ -1,0 +1,3 @@
+/workdir/RenvSensors/build/bootloader/CMakeFiles/boot_stage2.dir
+/workdir/RenvSensors/build/bootloader/CMakeFiles/edit_cache.dir
+/workdir/RenvSensors/build/bootloader/CMakeFiles/rebuild_cache.dir

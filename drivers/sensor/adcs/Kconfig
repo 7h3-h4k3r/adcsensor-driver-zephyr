@@ -1,0 +1,7 @@
+config SENSORADC
+    bool "Sensor Driver"
+    default y
+    depends on DT_HAS_CUSTOM_SENSORADC_ENABLED
+    select ADC 
+    help 
+      Enable custom zephyr sensor driver 

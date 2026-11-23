@@ -1,0 +1,60 @@
+/ {
+    mq135_sensor: sensoradc_1 {
+        compatible = "custom,sensoradc";
+        io-channels = <&adc 0>; /* Match your board's ADC controller & channel */
+        min-adc = <450>;
+        max-adc = <3500>;
+        status = "okay";
+    };
+
+    water_level_depth_sensor: sensoradc_2 {
+        compatible = "custom,sensoradc";
+        io-channels = <&adc 1>; 
+        min-adc = <450>;
+        max-adc = <3500>;
+        status = "okay";
+    };
+
+    soil_moisture_sensor: sensoradc_3{
+        compatible = "custom,sensoradc";
+        io-channels = <&adc 2>; 
+        min-adc = <450>;
+        max-adc = <3500>;
+        status = "okay";
+    };
+
+};
+
+&adc {
+    status = "okay";
+    #address-cells = <1>;
+    #size-cells = <0>;
+
+    channel@0 {
+        reg = <0>;
+        zephyr,gain = "ADC_GAIN_1";
+        zephyr,reference = "ADC_REF_INTERNAL";
+        zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+        zephyr,resolution = <12>;
+    };
+
+
+    channel@1 {
+        reg = <1>;
+        zephyr,gain = "ADC_GAIN_1";
+        zephyr,reference = "ADC_REF_INTERNAL";
+        zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+        zephyr,resolution = <12>;
+    };
+
+    channel@2 {
+        reg = <2>;
+        zephyr,gain = "ADC_GAIN_1";
+        zephyr,reference = "ADC_REF_INTERNAL";
+        zephyr,acquisition-time = <ADC_ACQ_TIME_DEFAULT>;
+        zephyr,resolution = <12>;
+    };
+
+
+   
+};

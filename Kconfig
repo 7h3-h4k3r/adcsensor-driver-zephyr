@@ -1,0 +1,4 @@
+mainmenu "MQ135 Application"
+
+source "Kconfig.zephyr"
+rsource "drivers/sensor/adcs/Kconfig"
