@@ -8673,5 +8673,38 @@
       "/workdir/RenvSensors/prj.conf",
       5
     ]
+  ],
+  [
+    "CONFIG_MQ135",
+    "y",
+    "bool",
+    "n",
+    "assign",
+    [
+      "/workdir/RenvSensors/prj.conf",
+      6
+    ]
+  ],
+  [
+    "CONFIG_WATER",
+    "y",
+    "bool",
+    "y",
+    "assign",
+    [
+      "/workdir/RenvSensors/prj.conf",
+      7
+    ]
+  ],
+  [
+    "CONFIG_SOIL",
+    "y",
+    "bool",
+    "y",
+    "assign",
+    [
+      "/workdir/RenvSensors/prj.conf",
+      8
+    ]
   ]
 ]

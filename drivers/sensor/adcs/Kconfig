@@ -5,3 +5,16 @@ config SENSORADC
     select ADC 
     help 
       Enable custom zephyr sensor driver 
+
+
+config MQ135
+    bool "Enable MQ135 Gas Sensor"
+    default n
+
+config WATER
+    bool "Enable HW-038 Gas Sensor"
+    default n
+
+config SOIL
+    bool "Enable SOIL-MS Gas Sensor"
+    default n

@@ -2,36 +2,94 @@
 #include <zephyr/device.h>
 #include <zephyr/drivers/sensor.h>
 #include <stdio.h>
+#include "adcsensor.h"
 
-#define SENSOR_CHAN_MQ135_PERCENT (SENSOR_CHAN_PRIV_START + 1)
+static void sensors_stop(struct k_timer *timer_id);
 
-int main(void)
-{
-    const struct device *mq135 = DEVICE_DT_GET(DT_NODELABEL(mq135_sensor));
-    const struct device *water = DEVICE_DT_GET(DT_NODELABEL(water_level_depth_sensor));
-    const struct device *soil  = DEVICE_DT_GET(DT_NODELABEL(soil_moisture_sensor));
+#ifdef CONFIG_MQ135
+const struct device *mq135 = DEVICE_DT_GET(DT_NODELABEL(mq135_sensor));
+#endif
+
+#ifdef CONFIG_WATER
+const struct device *water = DEVICE_DT_GET(DT_NODELABEL(water_level_depth_sensor));
+#endif
+
+#ifdef CONFIG_SOIL
+const struct device *soil = DEVICE_DT_GET(DT_NODELABEL(soil_moisture_sensor));
+#endif
+
+static void mqtt_publish_work_handler(struct k_work *work){
     struct sensor_value raw_val, pct_val;
     char json_payload[128];
 
-    if (!device_is_ready(mq135)) {
-        printk("MQ-135 device not ready!\n");
-        return -1;
-    }
-
     while (1) {
-        if (adcsensor_sample_fetch(mq135) == 0) {
-            adcsensor_channel_get(mq135, SENSOR_CHAN_GAS_RES, &raw_val);
-            adcsensor_channel_get(mq135, SENSOR_CHAN_MQ135_PERCENT, &pct_val);
+    #ifdef CONFIG_MQ135
+    if (sensor_sample_fetch(mq135) == 0) {
+        sensor_channel_get(mq135, SENSOR_GET_RAW_ADC, &raw_val);
+        sensor_channel_get(mq135, SENSOR_GET_PERCENTAGE, &pct_val);
 
-            double pct = sensor_value_to_double(&pct_val);
+        double pct = sensor_value_to_double(&pct_val);
 
-            snprintf(json_payload, sizeof(json_payload),
-                     "{\"sensor\":\"MQ-135\",\"raw_adc\":%d,\"pollution_percent\":%.1f}",
-                     raw_val.val1, pct);
+        snprintf(json_payload, sizeof(json_payload),
+                    "{\"sensor\":\"MQ-135\",\"raw_adc\":%d,\"pollution_percent\":%.1f}",
+                    raw_val.val1, pct);
 
-            printk("%s\n", json_payload);
-        }
-        k_sleep(K_SECONDS(2));
+        printk("%s\n", json_payload);
     }
+    #endif
+
+    #ifdef CONFIG_WATER
+    if (sensor_sample_fetch(water) == 0){
+        sensor_channel_get(water,SENSOR_GET_RAW_ADC,&raw_val);
+        sensor_channel_get(water,SENSOR_GET_PERCENTAGE,&pct_val);
+
+        double pct = sensor_value_to_double(&pct_val);
+
+        snprintf(json_payload, sizeof(json_payload),
+                    "{\"sensor\":\"HW-038\",\"raw_adc\":%d,\"water depth\":%.1f}",
+                    raw_val.val1, pct);
+
+        printk("%s\n", json_payload);
+    }
+    #endif
+
+    #ifdef CONFIG_SOIL
+    if (sensor_sample_fetch(soil) == 0){
+        sensor_channel_get(soil,SENSOR_GET_RAW_ADC,&raw_val);
+        sensor_channel_get(soil,SENSOR_GET_PERCENTAGE,&pct_val);
+
+        double pct = sensor_value_to_double(&pct_val);
+
+        snprintf(json_payload, sizeof(json_payload),
+                    "{\"sensor\":\"SOIL-MS\",\"raw_adc\":%d,\"soil state\":%.1f}",
+                    raw_val.val1, pct);
+
+        printk("%s\n", json_payload);
+    }
+    #endif
+    }
+   
+
+    return;
+}
+K_WORK_DEFINE(mqtt_publish_work,mqtt_publish_work_handler);
+
+static void sensors_start(struct k_timer *timer_id){
+    k_work_submit(&mqtt_publish_work);
+}   
+
+
+
+
+K_TIMER_DEFINE(sensors_timer,sensors_start,sensors_stop);
+
+static void sensors_stop(struct k_timer *timer_id){
+    k_timer_stop(&sensors_timer);
+}
+
+
+int main(void)
+{
+    k_timer_start(&sensors_timer, K_MSEC(1000), K_MSEC(5000));
     return 0;
 }

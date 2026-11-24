@@ -6,31 +6,32 @@
 #include <zephyr/drivers/adc.h>
 #include <zephyr/drivers/sensor.h>
 #include <zephyr/logging/log.h>
+#include "adcsensor.h"
 
 LOG_MODULE_REGISTER(adc,CONFIG_SENSOR_LOG_LEVEL);
 
 #define SAMPLE_COUNT 10
 
-#define SENSOR_CHAN_adc_PERCENT (SENSOR_CHAN_PRIV_START + 1)
-
-
-struct sensor_config{
+struct adcsensor_config{
     struct adc_dt_spec adc;
     int32_t min_adc;
     int32_t max_adc;
 };
 
 
-struct sensor_data{
+struct adcsensor_data{
     int32_t raw_avg;
     float percentage;
 };
 
 
-static int adcsensor_sample_fetch(const struct device *dev , enum sensor_channel chan)
+static int adcsensor_sample_fetch(const struct device *dev ,enum sensor_channel chan)
+
 {
-    const struct sensor_config *cfg = dev->config;
-    struct sensor_data *data = dev->data;
+
+    ARG_UNUSED(chan);
+    const struct adcsensor_config *cfg = dev->config;
+    struct adcsensor_data *data = dev->data;
     int16_t raw_buf;
     int32_t sum = 0;
 
@@ -76,14 +77,15 @@ static int adcsensor_channel_get(const struct device *dev,
                             enum sensor_channel chan,
                             struct sensor_value *val)
 {
-    struct sensor_data  *data = dev->data;
+    struct adcsensor_data  *data = dev->data;
 
     switch ((int)chan){
-        case SENSOR_CHAN_GAS_RES:
+        case SENSOR_GET_RAW_ADC:
             val->val1 = data->raw_avg;
             val->val2 = 0;
             return 0;
-        case SENSOR_CHAN_adc_PERCENT:
+
+        case SENSOR_GET_PERCENTAGE:
             sensor_value_from_float(val,data->percentage);
             return 0;
         default:
@@ -99,9 +101,9 @@ static const struct sensor_driver_api adcsensor_driver_api = {
 };
 
 
-static int sensor_init(const struct device *dev)
+static int adcsensor_init(const struct device *dev)
 {
-    const struct sensor_config *cfg = dev->config;
+    const struct adcsensor_config *cfg = dev->config;
 
     if(!adc_is_ready_dt(&cfg->adc)){
         LOG_ERR("ADC device %s not ready",cfg->adc.dev->name);
@@ -114,24 +116,24 @@ static int sensor_init(const struct device *dev)
         LOG_ERR("ADC channel setup failed %d ",err);
         return err;
     }
-
+    LOG_INF("ADC device %s is ready to send a Data ",cfg->adc.dev->name);
     return 0;
 }
 
 
 
 #define SENSORADC_DEFINE(inst)                                              \
-    static struct sensor_data sensor_data_##inst;                         \
-    static const struct sensor_config sensor_config_##inst = {            \
+    static struct adcsensor_data adcsensor_data_##inst;                         \
+    static const struct adcsensor_config adcsensor_config_##inst = {            \
         .adc = ADC_DT_SPEC_INST_GET(inst),                              \
         .min_adc = DT_INST_PROP(inst, min_adc),             \
         .max_adc = DT_INST_PROP(inst, max_adc),                 \
     };                                                                  \
     SENSOR_DEVICE_DT_INST_DEFINE(inst,                                  \
-                                 sensor_init,                            \
+                                 adcsensor_init,                            \
                                  NULL,                                  \
-                                 &sensor_data_##inst,                    \
-                                 &sensor_config_##inst,                  \
+                                 &adcsensor_data_##inst,                    \
+                                 &adcsensor_config_##inst,                  \
                                  POST_KERNEL,                           \
                                  CONFIG_SENSOR_INIT_PRIORITY,           \
                                  &adcsensor_driver_api);
