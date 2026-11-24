@@ -65,3 +65,4 @@
 /workdir/zephyrproject/zephyr/dts/bindings/led/gpio-leds.yaml
 /workdir/zephyrproject/zephyr/dts/bindings/led/pwm-leds.yaml
 /workdir/RenvSensors/dts/bindings/sensor/custom,sensoradc.yaml
+/workdir/zephyrproject/zephyr/dts/bindings/input/gpio-keys.yaml

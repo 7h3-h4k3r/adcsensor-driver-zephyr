@@ -1,4 +1,8 @@
 mainmenu "MQ135 Application"
 
 source "Kconfig.zephyr"
+
+config LDR
+    bool "Enable ldr sensor"
+    default n
 rsource "drivers/sensor/adcs/Kconfig"

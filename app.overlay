@@ -23,6 +23,13 @@
         status = "okay";
     };
 
+    ldr_sensor{
+        compatible = "gpio-keys";
+        ldr_sensor: ldr_sensor_irq_1{
+            gpios = <&gpio0 22 (GPIO_PULL_UP | GPIO_ACTIVE_LOW)>;
+            label ="LDR sensor";
+        };
+    };
 };
 
 &adc {

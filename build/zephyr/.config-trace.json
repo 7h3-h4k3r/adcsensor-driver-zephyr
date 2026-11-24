@@ -66,6 +66,17 @@
     ]
   ],
   [
+    "CONFIG_DT_HAS_GPIO_KEYS_ENABLED",
+    "n",
+    "bool",
+    "y",
+    "default",
+    [
+      "/workdir/RenvSensors/build/Kconfig/Kconfig.dts",
+      3598
+    ]
+  ],
+  [
     "CONFIG_DT_HAS_GPIO_LEDS_ENABLED",
     "n",
     "bool",
@@ -6940,10 +6951,10 @@
     "y",
     "int",
     "3",
-    "default",
+    "assign",
     [
-      "/workdir/zephyrproject/zephyr/subsys/logging/Kconfig.filtering",
-      39
+      "/workdir/RenvSensors/prj.conf",
+      11
     ]
   ],
   [
@@ -8662,6 +8673,17 @@
     null,
     "unset",
     null
+  ],
+  [
+    "CONFIG_LDR",
+    "y",
+    "bool",
+    "y",
+    "assign",
+    [
+      "/workdir/RenvSensors/prj.conf",
+      9
+    ]
   ],
   [
     "CONFIG_SENSORADC",

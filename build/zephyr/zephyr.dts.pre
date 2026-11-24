@@ -891,6 +891,13 @@ pico_serial0: &uart0 {};
         status = "okay";
     };
 
+    ldr_sensor{
+        compatible = "gpio-keys";
+        ldr_sensor: ldr_sensor_irq_1{
+            gpios = <&gpio0 22 ((1 << 4) | (1 << 0))>;
+            label ="LDR sensor";
+        };
+    };
 };
 
 &adc {

@@ -1,8 +1,14 @@
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/sensor.h>
+#include <zephyr/drivers/gpio.h>
+#include <zephyr/logging/log.h>
 #include <stdio.h>
 #include "adcsensor.h"
+
+LOG_MODULE_REGISTER(irq_sensor,LOG_LEVEL_DBG);
+
+#define DEBOUCE_DELAY_MS 50
 
 static void sensors_stop(struct k_timer *timer_id);
 
@@ -18,6 +24,29 @@ const struct device *water = DEVICE_DT_GET(DT_NODELABEL(water_level_depth_sensor
 const struct device *soil = DEVICE_DT_GET(DT_NODELABEL(soil_moisture_sensor));
 #endif
 
+static const struct gpio_dt_spec ldr = GPIO_DT_SPEC_GET(DT_NODELABEL(ldr_sensor),gpios);
+
+static struct gpio_callback ldr_cb_data;
+
+static struct k_work_delayable ldr_debounce_work;
+
+
+static void ldr_debounce_handler(struct k_work *work)
+{
+    int state = gpio_pin_get_dt(&ldr);
+    printk("LDR state changed: %d\n",state);   
+}
+
+
+#ifdef CONFIG_LDR
+
+
+void ldr_isr(const struct device *dev , struct gpio_callback *cb, uint32_t pins)
+{
+    
+    k_work_reschedule(&ldr_debounce_work,K_MSEC(DEBOUCE_DELAY_MS));
+}
+#endif
 static void mqtt_publish_work_handler(struct k_work *work){
     struct sensor_value raw_val, pct_val;
     char json_payload[128];
@@ -90,6 +119,30 @@ static void sensors_stop(struct k_timer *timer_id){
 
 int main(void)
 {
-    k_timer_start(&sensors_timer, K_MSEC(1000), K_MSEC(5000));
+    int ret;
+    #ifdef CONFIG_LDR
+        if (!gpio_is_ready_dt(&ldr)) {
+            return -1;
+        }
+
+        ret = gpio_pin_configure_dt(&ldr,GPIO_INPUT);
+        if(ret < 0){
+            return ret;
+        }
+        k_work_init_delayable(&ldr_debounce_work,ldr_debounce_handler);
+        gpio_init_callback(&ldr_cb_data,ldr_isr,BIT(ldr.pin));
+        gpio_add_callback(ldr.port,&ldr_cb_data);
+
+        ret = gpio_pin_interrupt_configure_dt(&ldr,GPIO_INT_EDGE_FALLING);
+        if (ret < 0){
+            return ret;
+        }
+        LOG_INF("LDR sensor now configured ");
+    #endif
+    while (1){
+        LOG_INF("Pin raw state: %d",gpio_pin_get_raw(ldr.port,ldr.pin));
+        k_msleep(1000);
+    }
+    //k_timer_start(&sensors_timer, K_MSEC(1000), K_MSEC(5000));
     return 0;
 }

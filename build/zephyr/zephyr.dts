@@ -249,36 +249,36 @@
 			#io-channel-cells = < 0x1 >;         /* in zephyr/dts/arm/raspberrypi/rpi_pico/rp2040.dtsi:317 */
 			pinctrl-0 = < &adc_default >;        /* in zephyr/boards/raspberrypi/rpi_pico/rpi_pico-common.dtsi:141 */
 			pinctrl-names = "default";           /* in zephyr/boards/raspberrypi/rpi_pico/rpi_pico-common.dtsi:142 */
-			status = "okay";                     /* in ../RenvSensors/app.overlay:29 */
-			#address-cells = < 0x1 >;            /* in ../RenvSensors/app.overlay:30 */
-			#size-cells = < 0x0 >;               /* in ../RenvSensors/app.overlay:31 */
+			status = "okay";                     /* in ../RenvSensors/app.overlay:36 */
+			#address-cells = < 0x1 >;            /* in ../RenvSensors/app.overlay:37 */
+			#size-cells = < 0x0 >;               /* in ../RenvSensors/app.overlay:38 */
 			phandle = < 0x1e >;                  /* in zephyr/dts/arm/raspberrypi/rpi_pico/rp2040.dtsi:496 */
 
-			/* node '/soc/adc@4004c000/channel@0' defined in ../RenvSensors/app.overlay:33 */
+			/* node '/soc/adc@4004c000/channel@0' defined in ../RenvSensors/app.overlay:40 */
 			channel@0 {
-				reg = < 0x0 >;                         /* in ../RenvSensors/app.overlay:34 */
-				zephyr,gain = "ADC_GAIN_1";            /* in ../RenvSensors/app.overlay:35 */
-				zephyr,reference = "ADC_REF_INTERNAL"; /* in ../RenvSensors/app.overlay:36 */
-				zephyr,acquisition-time = < 0x0 >;     /* in ../RenvSensors/app.overlay:37 */
-				zephyr,resolution = < 0xc >;           /* in ../RenvSensors/app.overlay:38 */
+				reg = < 0x0 >;                         /* in ../RenvSensors/app.overlay:41 */
+				zephyr,gain = "ADC_GAIN_1";            /* in ../RenvSensors/app.overlay:42 */
+				zephyr,reference = "ADC_REF_INTERNAL"; /* in ../RenvSensors/app.overlay:43 */
+				zephyr,acquisition-time = < 0x0 >;     /* in ../RenvSensors/app.overlay:44 */
+				zephyr,resolution = < 0xc >;           /* in ../RenvSensors/app.overlay:45 */
 			};
 
-			/* node '/soc/adc@4004c000/channel@1' defined in ../RenvSensors/app.overlay:42 */
+			/* node '/soc/adc@4004c000/channel@1' defined in ../RenvSensors/app.overlay:49 */
 			channel@1 {
-				reg = < 0x1 >;                         /* in ../RenvSensors/app.overlay:43 */
-				zephyr,gain = "ADC_GAIN_1";            /* in ../RenvSensors/app.overlay:44 */
-				zephyr,reference = "ADC_REF_INTERNAL"; /* in ../RenvSensors/app.overlay:45 */
-				zephyr,acquisition-time = < 0x0 >;     /* in ../RenvSensors/app.overlay:46 */
-				zephyr,resolution = < 0xc >;           /* in ../RenvSensors/app.overlay:47 */
+				reg = < 0x1 >;                         /* in ../RenvSensors/app.overlay:50 */
+				zephyr,gain = "ADC_GAIN_1";            /* in ../RenvSensors/app.overlay:51 */
+				zephyr,reference = "ADC_REF_INTERNAL"; /* in ../RenvSensors/app.overlay:52 */
+				zephyr,acquisition-time = < 0x0 >;     /* in ../RenvSensors/app.overlay:53 */
+				zephyr,resolution = < 0xc >;           /* in ../RenvSensors/app.overlay:54 */
 			};
 
-			/* node '/soc/adc@4004c000/channel@2' defined in ../RenvSensors/app.overlay:50 */
+			/* node '/soc/adc@4004c000/channel@2' defined in ../RenvSensors/app.overlay:57 */
 			channel@2 {
-				reg = < 0x2 >;                         /* in ../RenvSensors/app.overlay:51 */
-				zephyr,gain = "ADC_GAIN_1";            /* in ../RenvSensors/app.overlay:52 */
-				zephyr,reference = "ADC_REF_INTERNAL"; /* in ../RenvSensors/app.overlay:53 */
-				zephyr,acquisition-time = < 0x0 >;     /* in ../RenvSensors/app.overlay:54 */
-				zephyr,resolution = < 0xc >;           /* in ../RenvSensors/app.overlay:55 */
+				reg = < 0x2 >;                         /* in ../RenvSensors/app.overlay:58 */
+				zephyr,gain = "ADC_GAIN_1";            /* in ../RenvSensors/app.overlay:59 */
+				zephyr,reference = "ADC_REF_INTERNAL"; /* in ../RenvSensors/app.overlay:60 */
+				zephyr,acquisition-time = < 0x0 >;     /* in ../RenvSensors/app.overlay:61 */
+				zephyr,resolution = < 0xc >;           /* in ../RenvSensors/app.overlay:62 */
 			};
 		};
 
@@ -863,5 +863,16 @@
 		min-adc = < 0x1c2 >;             /* in ../RenvSensors/app.overlay:21 */
 		max-adc = < 0xdac >;             /* in ../RenvSensors/app.overlay:22 */
 		status = "okay";                 /* in ../RenvSensors/app.overlay:23 */
+	};
+
+	/* node '/ldr_sensor' defined in ../RenvSensors/app.overlay:26 */
+	ldr_sensor {
+		compatible = "gpio-keys"; /* in ../RenvSensors/app.overlay:27 */
+
+		/* node '/ldr_sensor/ldr_sensor_irq_1' defined in ../RenvSensors/app.overlay:28 */
+		ldr_sensor: ldr_sensor_irq_1 {
+			gpios = < &gpio0 0x16 0x11 >; /* in ../RenvSensors/app.overlay:29 */
+			label = "LDR sensor";         /* in ../RenvSensors/app.overlay:30 */
+		};
 	};
 };
